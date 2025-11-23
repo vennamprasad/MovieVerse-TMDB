@@ -1,0 +1,27 @@
+package com.prasadvennam.tmdb.navigation.routes
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import com.prasadvennam.tmdb.navigation.AppDestination
+import com.prasadvennam.tmdb.screen.details.movie_details.recommendations.RecommendationMoviesScreen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class RecommendationsRoute(val movieId: Int, val movieTitle: String) : AppDestination {
+    companion object {
+        const val MOVIE_ID = "movieId"
+        const val MOVIE_TITLE = "movieTitle"
+    }
+}
+
+fun NavGraphBuilder.recommendationsRoute(navController: NavHostController) {
+    composable<RecommendationsRoute> {
+        RecommendationMoviesScreen(
+            navigateBack = { navController.navigateUp() },
+            navigateToMovieDetails = { movieId ->
+                navController.navigate(MovieDetailsRoute(movieId))
+            },
+        )
+    }
+}

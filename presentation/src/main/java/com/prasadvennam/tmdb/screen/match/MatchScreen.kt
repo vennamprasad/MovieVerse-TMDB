@@ -1,0 +1,139 @@
+package com.prasadvennam.tmdb.screen.match
+
+import android.content.Intent
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.prasadvennam.tmdb.component.ErrorContent
+import com.prasadvennam.tmdb.designSystem.theme.Theme
+import com.prasadvennam.tmdb.screen.match.pages.MatchQuestionsPageContent
+import com.prasadvennam.tmdb.screen.match.pages.MatchResultsPageContent
+import com.prasadvennam.tmdb.screen.match.pages.MatchStartPageContent
+import com.prasadvennam.tmdb.presentation.R
+
+@Composable
+fun MatchScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MatchViewModel = hiltViewModel(),
+    navigateToMovieDetails: (id: Int) -> Unit,
+    navigateToCollectionsBottomSheet: (movieId: Int) -> Unit,
+    onBottomNavVisibilityChange: (Boolean) -> Unit = {}
+) {
+    BackHandler {
+        viewModel.onNavigateBack()
+    }
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(state.currentPage) {
+        val showBottomNav = state.currentPage == MatchPages.StartPage
+        onBottomNavVisibilityChange(showBottomNav)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onBottomNavVisibilityChange(true)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                is MatchEvent.OnClickStartMatching -> {
+                    viewModel.onClickStartMatching()
+                }
+
+                is MatchEvent.OnClickFinishMatching -> {
+                    viewModel.onClickFinishMatching()
+                }
+
+                is MatchEvent.OnMovieClick -> {
+                    navigateToMovieDetails(effect.id)
+                }
+
+                is MatchEvent.OpenTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
+                    context.startActivity(intent)
+                }
+
+                is MatchEvent.AddToCollection -> {
+                    navigateToCollectionsBottomSheet(effect.id)
+                }
+            }
+        }
+    }
+
+    when {
+
+        state.shouldShowError -> {
+            ErrorContent(
+                errorMessage = R.string.no_internet_connection,
+                onRetry = viewModel::onRetry,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Theme.colors.background.screen)
+            )
+        }
+
+        else -> {
+            MatchContent(
+                state = state,
+                listener = viewModel,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun MatchContent(
+    state: MatchUiState,
+    listener: MatchInteractionListener,
+    modifier: Modifier = Modifier,
+) {
+    val nextButtonBackground by animateColorAsState(
+        if (state.isNextButtonActivated) Theme.colors.button.primary else Theme.colors.button.disabled
+    )
+    val nextButtonTextColor by animateColorAsState(
+        if (state.isNextButtonActivated) Theme.colors.button.onPrimary else Theme.colors.button.onDisabled
+    )
+
+    when (state.currentPage) {
+        MatchPages.StartPage -> MatchStartPageContent(
+            modifier = modifier.padding(top = 4.dp),
+            onClickStartMatching = listener::onClickStartMatching
+        )
+
+        MatchPages.QuestionsPage -> MatchQuestionsPageContent(
+            modifier = modifier,
+            onClickNextQuestion = listener::onClickNextQuestion,
+            state = state,
+            onAnswerSelected = listener::onAnswerSelected,
+            onNavigateBack = listener::onNavigateBack,
+            nextButtonColor = nextButtonBackground,
+            nextButtonTextColor = nextButtonTextColor
+        )
+
+        MatchPages.ResultsPage -> MatchResultsPageContent(
+            modifier = modifier,
+            isBlurEnabled = state.enableBlur,
+            movies = state.matchResults,
+            onMovieClick = listener::onMovieClick,
+            onNavigateBack = listener::onNavigateBack,
+            onSaveClick = listener::onSaveClick,
+            onPlayClick = listener::onPlayClick
+        )
+    }
+}

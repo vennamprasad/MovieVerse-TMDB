@@ -1,0 +1,61 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+plugins {
+    alias(libs.plugins.movieverse.android.library)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hiltAndroid)
+}
+
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("keys.properties")))
+
+android {
+    namespace = "com.prasadvennam.tmdb.data"
+
+    defaultConfig {
+        val bearerToken = localProperties["BEARER_TOKEN"].toString()
+        buildConfigField("String", "BEARER_TOKEN", "\"${bearerToken.trim()}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+    kotlinOptions {
+        freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+    }
+}
+
+dependencies {
+    implementation(projects.domain)
+    //Data Store
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences)
+
+    /** DaggerHilt */
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    //OkHttp
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    //Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    //gson
+    implementation(libs.gson)
+    //date time
+    implementation(libs.kotlinx.datetime)
+    // Background
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.appcompat)
+}

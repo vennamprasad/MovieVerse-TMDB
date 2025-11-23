@@ -1,0 +1,54 @@
+package com.prasadvennam.tmdb.screen.match.pages
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.prasadvennam.tmdb.designSystem.component.app_bar.MovieAppBar
+import com.prasadvennam.tmdb.designSystem.component.wrapper.MovieScaffold
+import com.prasadvennam.tmdb.screen.details.movie_details.MovieScreenState
+import com.prasadvennam.tmdb.screen.match.composable.MatchCarouselAnimation
+import com.prasadvennam.tmdb.presentation.R
+
+@Composable
+fun MatchResultsPageContent(
+    movies: List<MovieScreenState.MovieDetailsUiState>,
+    isBlurEnabled: String,
+    onMovieClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit,
+    onSaveClick: (Int) -> Unit,
+    onPlayClick: (Int, String) -> Unit
+) {
+    MovieScaffold(
+        modifier = modifier,
+        movieAppBar = {
+            MovieAppBar(
+                title = stringResource(R.string.match_list),
+                backButtonClick = onNavigateBack,
+                showBackButton = true,
+            )
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            MatchCarouselAnimation(
+                movies = movies,
+                isBlurEnabled = isBlurEnabled,
+                onMovieClick = onMovieClick,
+                onSaveClick = onSaveClick,
+                onPlayClick = onPlayClick,
+            )
+        }
+    }
+}

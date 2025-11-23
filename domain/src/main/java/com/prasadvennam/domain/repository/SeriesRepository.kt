@@ -1,0 +1,23 @@
+package com.prasadvennam.domain.repository
+
+import com.prasadvennam.domain.model.CreditsInfo
+import com.prasadvennam.domain.model.Review
+import com.prasadvennam.domain.model.Series
+import com.prasadvennam.domain.model.Series.Season
+import com.prasadvennam.domain.usecase.rating.GetRatedSeriesUseCase.RatedSeriesResult
+
+interface SeriesRepository {
+    suspend fun getPopularSeries(page: Int): List<Series>
+    suspend fun getSeriesDetail(id: Int): Series
+    suspend fun rateSeries(id: Int, rating: Float)
+    suspend fun deleteRatingSeries(seriesId: Int)
+    suspend fun getRatedSeries(userId: Int, page: Int): List<RatedSeriesResult>
+    suspend fun getUserRatingForSeries(seriesId: Int) : Int
+    suspend fun getLatestSeasons(): List<Season>
+    suspend fun getListOfSeries(id: Int, page: Int): List<Series>
+    suspend fun getSeriesRecommendations(id: Int, page: Int): List<Series>
+    suspend fun getSeriesByGenreId(genreId: Int, page: Int): List<Series>
+    suspend fun getTopRatedTVSeries(page: Int, forceRefresh: Boolean = false): List<Series>
+    suspend fun getSeriesReviews(id: Int, page: Int): List<Review>
+    suspend fun getSeriesCreditsDetails(id: Int): CreditsInfo
+}

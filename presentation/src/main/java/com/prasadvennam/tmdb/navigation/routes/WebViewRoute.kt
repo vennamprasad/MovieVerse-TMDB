@@ -1,0 +1,21 @@
+package com.prasadvennam.tmdb.navigation.routes
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
+import com.prasadvennam.tmdb.navigation.AppDestination
+import com.prasadvennam.tmdb.screen.login.WebViewBrowser
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WebViewRoute(val url: String): AppDestination
+
+fun NavGraphBuilder.webViewRoute(navController: NavHostController) {
+    composable<WebViewRoute>{
+        val args = it.toRoute<WebViewRoute>()
+        WebViewBrowser(url = args.url) {
+            navController.navigateUp()
+        }
+    }
+}

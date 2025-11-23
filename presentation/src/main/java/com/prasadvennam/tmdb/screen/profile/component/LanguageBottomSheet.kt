@@ -1,0 +1,120 @@
+package com.prasadvennam.tmdb.screen.profile.component
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.prasadvennam.tmdb.designSystem.component.bottomsheet.MovieVerseBottomSheet
+import com.prasadvennam.tmdb.designSystem.theme.Theme
+import com.prasadvennam.tmdb.presentation.R
+import com.prasadvennam.domain.model.language.AppLanguage
+
+@Composable
+fun LanguageBottomSheet(
+    visible: Boolean,
+    selectedLanguage: String,
+    onDismiss: () -> Unit,
+    switchLanguage: (String) -> Unit
+) {
+    AnimatedVisibility(visible) {
+        MovieVerseBottomSheet(
+            title = stringResource(R.string.change_language),
+            onClose = onDismiss,
+            onDismissRequest = onDismiss,
+            showCancelIcon = true,
+        ) {
+            LanguageBottomSheetContent(
+                selectedLanguage = selectedLanguage,
+                switchLanguage = switchLanguage
+            )
+        }
+    }
+}
+
+@Composable
+private fun LanguageBottomSheetContent(
+    selectedLanguage: String,
+    switchLanguage: (String) -> Unit,
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+    ) {
+        LanguageOption(
+            modifier = Modifier.weight(1f),
+            name = stringResource(R.string.english),
+            imageRes = R.drawable.uk_flag,
+            isSelected = selectedLanguage == AppLanguage.English.code,
+            onClick = { switchLanguage(AppLanguage.English.code) }
+        )
+    }
+}
+
+
+@Composable
+fun LanguageOption(
+    modifier: Modifier = Modifier,
+    name: String,
+    imageRes: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+
+    val borderColor by animateColorAsState(
+        if (isSelected) Theme.colors.brand.secondary else Color.Transparent
+    )
+
+    val backgroundColor by animateColorAsState(
+        if (isSelected) Theme.colors.brand.tertiary else Theme.colors.background.bottomSheetCard
+    )
+
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(Theme.radius.large))
+            .background(color = backgroundColor)
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(Theme.radius.large)
+            )
+            .clickable { onClick() }
+            .padding(vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(imageRes),
+            contentDescription = "$name flag",
+            modifier = Modifier
+                .size(32.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = name,
+            color = if (isSelected) Theme.colors.brand.primary else Theme.colors.shade.primary,
+            style = Theme.textStyle.body.medium.medium
+        )
+    }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path
+        android:fillColor="#1A1A1A"
+        android:pathData="M100,31C78,31 47,47 35,69L40,73C49,54 72,39 100,39C128,39 151,54 160,73L165,69C153,47 122,31 100,31Z" />
+
+    <!-- Mid ring left (strong charcoal) -->
+    <path
+        android:fillColor="#262626"
+        android:pathData="M35,69C26,84 23,103 23,121L77,121L77,78C61,74 47,71 35,69Z" />
+
+    <!-- Mid ring right -->
+    <path
+        android:fillColor="#262626"
+        android:pathData="M165,69C153,71 139,74 123,78L123,121L177,121C177,103 174,84 165,69Z" />
+
+    <!-- Lower ring left (dark gray) -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M23,121L77,121L77,156C47,148 27,136 23,121Z" />
+
+    <!-- Lower ring right -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M123,121L177,121C173,136 153,148 123,156Z" />
+
+    <path
+        android:fillColor="#000000"
+        android:pathData="M100,70C82,70 68,84 68,102C68,120 82,134 100,134C118,134 132,120 132,102C132,84 118,70 100,70Z" />
+
+    <path
+        android:fillColor="#E50914"
+        android:pathData="M100,75C85,75 73,87 73,102C73,117 85,129 100,129C115,129 127,117 127,102C127,87 115,75 100,75Z" />
+
+    <!-- Play icon (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M90,87L90,117L118,102Z" />
+
+</vector>

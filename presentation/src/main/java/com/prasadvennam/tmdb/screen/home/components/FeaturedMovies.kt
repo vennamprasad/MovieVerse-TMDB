@@ -1,0 +1,46 @@
+package com.prasadvennam.tmdb.screen.home.components
+
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.prasadvennam.tmdb.common_ui_state.MediaItemUiState
+import com.prasadvennam.tmdb.component.MediaPosterCard
+import com.prasadvennam.tmdb.component.MovieListSection
+import com.prasadvennam.tmdb.screen.home.HomeFeaturedItems
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun FeaturedMovies(
+    modifier: Modifier = Modifier,
+    displayMovies: List<MediaItemUiState>,
+    onShowMoreClick: ((type: HomeFeaturedItems) -> Unit)? = null,
+    onMovieClick: (MediaItemUiState) -> Unit,
+    onSeaMoreRecentlyViewedClicked: () -> Unit = {},
+    type: HomeFeaturedItems,
+    enableBlur: String,
+) {
+    MovieListSection(
+        title = stringResource(type.titleResource),
+        mediaItems = displayMovies,
+        paddingHorizontal = 16,
+        onClickShowMore = {
+            if (onShowMoreClick != null)
+                onShowMoreClick(type)
+            else
+                onSeaMoreRecentlyViewedClicked()
+        },
+        onClickPoster = { movie ->
+            onMovieClick(movie)
+        },
+        movieCardContent = { movie, cardModifier, onMovieClick ->
+            MediaPosterCard(
+                mediaItem = movie,
+                onMediaItemClick = { movieId -> onMovieClick(movie) },
+                modifier = cardModifier,
+                enableBlur = enableBlur,
+            )
+        },
+        modifier = modifier
+    )
+}

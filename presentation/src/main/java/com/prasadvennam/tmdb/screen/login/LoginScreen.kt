@@ -1,0 +1,244 @@
+package com.prasadvennam.tmdb.screen.login
+
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.prasadvennam.tmdb.designSystem.component.bottomsheet.MovieVerseBottomSheet
+import com.prasadvennam.tmdb.designSystem.component.button.MovieButton
+import com.prasadvennam.tmdb.designSystem.component.card.MessageInfoCard
+import com.prasadvennam.tmdb.designSystem.component.text.AppTextField
+import com.prasadvennam.tmdb.designSystem.component.wrapper.MovieScaffold
+import com.prasadvennam.tmdb.designSystem.theme.Theme
+import com.prasadvennam.tmdb.presentation.R
+
+@Composable
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    navigateToHome: () -> Unit,
+) {
+    val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffect.collect { event ->
+            when (event) {
+                is LoginScreenEvents.ShowError -> {
+                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_LONG)
+                        .show()
+                }
+
+                is LoginScreenEvents.NavigateTo -> {
+                    navigateToHome()
+
+                }
+            }
+        }
+    }
+
+    LoginScreenContent(
+        state = state,
+        interactionListener = viewModel,
+        context = context
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    modifier: Modifier = Modifier,
+    state: LoginScreenState,
+    interactionListener: LoginInteractionListener,
+    context: Context
+) {
+    val focusManager = LocalFocusManager.current
+    val isError = state.passwordError != null || state.loginError != null
+    val errorMessage = if (state.passwordError != null) state.passwordError.asString(context)
+    else state.loginError?.asString(context)
+
+    MovieScaffold() {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .background(color = Theme.colors.background.screen)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.movieverse),
+                contentDescription = stringResource(
+                    R.string.movie_verse_logo
+                ),
+                modifier = Modifier
+                    .padding(top = 64.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            Text(
+                text = stringResource(R.string.welcome_back_to_movie_verse),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .align(Alignment.CenterHorizontally),
+                fontSize = 20.sp,
+                color = Theme.colors.shade.primary,
+                style = Theme.textStyle.title.medium
+            )
+            AppTextField(
+                modifier = Modifier
+                    .padding(top = 48.dp, start = 16.dp, end = 16.dp)
+                    .align(Alignment.CenterHorizontally),
+                label = stringResource(R.string.username),
+                value = state.username,
+                onValueChange = interactionListener::onUsernameValueChanged,
+                placeholder = stringResource(R.string.enter_your_username),
+                leadingIcon = R.drawable.outline_user,
+                leadingIconTint = Theme.colors.shade.tertiary,
+                maxLines = 1,
+                isError = state.usernameError != null || state.loginError != null,
+                errorMessage = state.usernameError?.asString(context = context),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text,
+                    autoCorrectEnabled = true
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
+            )
+            AppTextField(
+                modifier = Modifier
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    .align(Alignment.CenterHorizontally),
+                label = stringResource(R.string.password),
+                value = state.password,
+                onValueChange = interactionListener::onPasswordValueChanged,
+                isPassword = true,
+                maxLines = 1,
+                placeholder = stringResource(R.string.enter_your_password),
+                leadingIcon = R.drawable.outline_lock,
+                leadingIconTint = Theme.colors.shade.tertiary,
+                isError = isError,
+                errorMessage = errorMessage,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password,
+                    autoCorrectEnabled = false
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                forgotPasswordClick = interactionListener::onClickForgetPassword
+            )
+            MovieButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, start = 16.dp, end = 16.dp),
+                buttonText = stringResource(R.string.login),
+                textColor = Theme.colors.button.onPrimary,
+                textStyle = Theme.textStyle.body.medium.medium,
+                onClick = interactionListener::onClickLogin,
+                buttonColor = Theme.colors.button.primary,
+                isLoading = state.isLoading,
+                enableAction = (state.username.isNotBlank() && state.password.length >= 4)
+                        && (state.usernameError == null && state.passwordError == null)
+                        && state.loginError == null
+            )
+            MovieButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp, start = 16.dp, end = 16.dp),
+                buttonText = stringResource(R.string.join_as_guest),
+                textColor = Theme.colors.button.onSecondary,
+                textStyle = Theme.textStyle.body.medium.medium,
+                onClick = interactionListener::onClickJoinAsGuest,
+                buttonColor = Theme.colors.button.secondary,
+                isLoading = state.isJoinAsGuest
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            MovieButton(
+                modifier = Modifier
+                    .padding(vertical = 24.dp)
+                    .align(Alignment.CenterHorizontally),
+                buttonText = stringResource(R.string.create_a_new_account),
+                textColor = Theme.colors.button.onSecondary,
+                textStyle = Theme.textStyle.body.medium.medium,
+                textPadding = PaddingValues(horizontal = 16.dp),
+                onClick = interactionListener::onClickCreateNewAccount,
+                buttonColor = Theme.colors.button.secondary,
+            )
+            AnimatedVisibility(state.showBrowserBottomSheet) {
+                BrowserBottomSheet(
+                    interactionListener = interactionListener,
+                    isForgotPassword = state.isForgotPassword
+                )
+            }
+        }
+        AnimatedVisibility(state.showWebView) {
+            WebViewBrowser(
+                url = state.urlWebView,
+                onExitWebView = {
+                    interactionListener.onExitWebViewBrowser()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun BrowserBottomSheet(
+    interactionListener: LoginInteractionListener,
+    isForgotPassword: Boolean = false
+) {
+    val messageBoxTile =
+        if (isForgotPassword) stringResource(R.string.reset_your_password) else stringResource(
+            R.string.join_movie_verse
+        )
+    val messageBoxDescription =
+        if (isForgotPassword) stringResource(R.string.forget_password_description) else stringResource(
+            R.string.let_s_get_you_set_up_we_ll_take_you_to_the_website_to_create_your_account
+        )
+
+    MovieVerseBottomSheet(
+        onClose = interactionListener::onDismissOrCancelBrowserBottomSheet,
+        onDismissRequest = interactionListener::onDismissOrCancelBrowserBottomSheet,
+        showCancelIcon = false,
+    ) {
+        MessageInfoCard(
+            title = messageBoxTile,
+            description = messageBoxDescription,
+            icon = painterResource(R.drawable.due_tone_link_minimalistic),
+            showButtonsGroup = true,
+            firstButtonText = stringResource(R.string.cancel),
+            onClickFirstButton = interactionListener::onDismissOrCancelBrowserBottomSheet,
+            secondButtonText = stringResource(R.string.go_to_website),
+            onClickSecondButton = interactionListener::onClickGoToWebsite
+        )
+    }
+}

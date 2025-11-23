@@ -1,0 +1,31 @@
+package com.prasadvennam.tmdb.navigation.routes
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import com.prasadvennam.tmdb.navigation.AppDestination
+import com.prasadvennam.tmdb.screen.collection_details.CollectionDetailsScreen
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CollectionDetailsRoute(val collectionId: Int, val collectionName: String) : AppDestination {
+    companion object {
+        const val COLLECTION_ID = "collectionId"
+        const val COLLECTION_NAME = "collectionName"
+    }
+}
+
+fun NavGraphBuilder.collectionDetailsRoute(navController: NavHostController) {
+    composable<CollectionDetailsRoute>{
+        CollectionDetailsScreen(
+            navigateBack = { navController.navigateUp() },
+            navigateToMovieDetails = { movieId ->
+                navController.navigate(MovieDetailsRoute(movieId))
+            },
+            navigateToSeriesDetails = { seriesId ->
+                navController.navigate(SeriesDetailsRoute(seriesId))
+            },
+            { navController.navigate(ExploreRoute) }
+        )
+    }
+}

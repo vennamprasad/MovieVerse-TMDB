@@ -1,0 +1,101 @@
+package com.prasadvennam.repository
+
+import com.prasadvennam.data_source.local.SearchLocalDataSource
+import com.prasadvennam.data_source.remote.SearchRemoteDataSource
+import com.prasadvennam.domain.model.Actor
+import com.prasadvennam.domain.model.Movie
+import com.prasadvennam.domain.model.Series
+import com.prasadvennam.domain.repository.SearchRepository
+import com.prasadvennam.mapper.toDomain
+import com.prasadvennam.mapper.toModel
+import com.prasadvennam.mapper.toSortedGenres
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
+
+class SearchRepositoryImpl @Inject constructor(
+    private val searchLocalDataSource: SearchLocalDataSource,
+    private val searchRemoteDataSource: SearchRemoteDataSource,
+) : SearchRepository {
+
+    override suspend fun getLocalSuggestions(): Flow<List<String>> {
+        return searchLocalDataSource.getAllSearchHistory()
+    }
+
+    override suspend fun deleteSearchHistory(searchTerm: String) {
+        searchLocalDataSource.deleteSearchHistory(searchTerm)
+    }
+
+    override suspend fun getRemoteSuggestions(keyWord: String, page: Int): List<String> {
+        return searchRemoteDataSource.searchByKeyword(
+            keyWord,
+            page,
+            false
+        ).results?.map { it.toModel() } ?: emptyList()
+    }
+
+    override suspend fun searchMovie(
+        query: String,
+        page: Int
+    ): Flow<List<Movie>> =
+        flow {
+            val result = searchRemoteDataSource.searchMovie(query, page, false)
+
+            val mappedResult = result.results?.sortByFavouriteGenres { it.genreIds ?: emptyList() }
+                ?.map { it.toDomain() } ?: emptyList()
+            emit(mappedResult)
+        }.flowOn(Dispatchers.IO)
+
+    override suspend fun searchSeries(
+        query: String,
+        page: Int
+    ): Flow<List<Series>> =
+        flow {
+            val result = searchRemoteDataSource.searchSeries(query, page, false)
+
+            val mappedResult = result.results?.sortByFavouriteGenres { it.genreIds ?: emptyList() }
+                ?.map { it.toDomain() } ?: emptyList()
+            emit(mappedResult)
+        }.flowOn(Dispatchers.IO)
+
+    override suspend fun searchActor(
+        query: String,
+        page: Int
+    ): Flow<List<Actor>> =
+        flow {
+            val result = searchRemoteDataSource.searchActor(query, page, false)
+
+            val mappedResult = result.results?.map { it.toDomain() } ?: emptyList()
+            emit(mappedResult)
+        }.flowOn(Dispatchers.IO)
+
+    override suspend fun cacheSearchQuery(query: String) {
+        searchLocalDataSource.insertSearchHistory(query)
+    }
+
+    override suspend fun clearSearchHistory() {
+        searchLocalDataSource.deleteAllSearchHistory()
+    }
+
+    private suspend fun <T> List<T>.sortByFavouriteGenres(
+        getGenreIds: (T) -> List<Int>
+    ): List<T> {
+        val favouriteGenres = searchLocalDataSource.getFavouriteGenres().toSortedGenres()
+        if (favouriteGenres.isEmpty()) return this
+
+        return this.sortedWith(
+            compareBy(
+                { item ->
+                    -getGenreIds(item).count { genre -> genre in favouriteGenres }
+                },
+                { item ->
+                    getGenreIds(item)
+                        .mapNotNull { genre -> favouriteGenres.indexOf(genre).takeIf { it != -1 } }
+                        .minOrNull() ?: Int.MAX_VALUE
+                }
+            )
+        )
+    }
+}

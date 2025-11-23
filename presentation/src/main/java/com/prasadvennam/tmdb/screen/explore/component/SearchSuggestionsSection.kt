@@ -1,0 +1,33 @@
+package com.prasadvennam.tmdb.screen.explore.component
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.prasadvennam.tmdb.screen.explore.ExploreInteractionListener
+import com.prasadvennam.tmdb.screen.explore.ExploreScreenState
+
+@Composable
+fun SearchSuggestionsSection(
+    uiState: ExploreScreenState,
+    interactionListener: ExploreInteractionListener,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = uiState.showSuggestions,
+        enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+        exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
+        modifier = modifier.fillMaxSize(),
+        ) {
+        SearchSuggestion(
+            suggestionList = uiState.displayedSuggestions,
+            isHistory = uiState.showHistory,
+            onClickSuggestion = interactionListener::onClickSuggestion,
+            onClearAllClicked = interactionListener::clearAllLocalSuggestions
+        )
+    }
+}

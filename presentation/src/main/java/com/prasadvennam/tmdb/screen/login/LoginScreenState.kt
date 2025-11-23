@@ -1,0 +1,17 @@
+package com.prasadvennam.tmdb.screen.login
+
+import com.prasadvennam.tmdb.utlis.StringValue
+
+data class LoginScreenState(
+    val username: String = "",
+    val password: String = "",
+    val usernameError: StringValue? = null,
+    val passwordError: StringValue? = null,
+    val loginError: StringValue? = null,
+    val isLoading: Boolean = false,
+    val showBrowserBottomSheet: Boolean = false,
+    val urlWebView: String = "",
+    val showWebView: Boolean = false,
+    val isJoinAsGuest: Boolean = false,
+    val isForgotPassword: Boolean = false
+)

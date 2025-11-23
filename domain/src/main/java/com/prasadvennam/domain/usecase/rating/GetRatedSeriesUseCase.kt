@@ -1,0 +1,44 @@
+package com.prasadvennam.domain.usecase.rating
+
+import com.prasadvennam.domain.model.Series
+import com.prasadvennam.domain.model.UserType
+import com.prasadvennam.domain.repository.auth.UserRepository
+import com.prasadvennam.domain.repository.SeriesRepository
+import jakarta.inject.Inject
+
+class GetRatedSeriesUseCase @Inject constructor(
+    private val seriesRepository: SeriesRepository,
+    private val userRepository: UserRepository
+) {
+
+    suspend operator fun invoke(
+        page: Int
+    ): List<RatedSeriesResult> {
+        val user = userRepository.getUser()
+        val userid = if (user is UserType.AuthenticatedUser) user.id else "0"
+
+        val parseUserid = try {
+            val equalIndex = userid.indexOfFirst { it == '=' }
+            val commaIndex = userid.indexOfFirst { it == ',' }
+
+            when {
+                equalIndex == -1 || commaIndex == -1 || commaIndex <= equalIndex -> {
+                    userid.toIntOrNull() ?: 0
+                }
+
+                else -> {
+                    userid.substring(equalIndex + 1, commaIndex).toIntOrNull() ?: 0
+                }
+            }
+        } catch (_: Exception) {
+            0
+        }
+
+        return seriesRepository.getRatedSeries(parseUserid, page)
+    }
+
+    data class RatedSeriesResult(
+        val series: Series,
+        val rating: Float
+    )
+}

@@ -1,0 +1,85 @@
+package com.prasadvennam.mapper
+
+import com.prasadvennam.domain.model.Actor
+import com.prasadvennam.domain.model.Actor.Gender
+import com.prasadvennam.domain.model.Movie
+import com.prasadvennam.remote.dto.actor.ActorBestOfMoviesDto
+import com.prasadvennam.remote.dto.actor.ActorDetailsDto
+import com.prasadvennam.remote.dto.actor.ActorDto
+import com.prasadvennam.remote.dto.actor.ActorImagesDto
+import com.prasadvennam.utils.IMAGES_URL
+import kotlinx.datetime.LocalDate
+
+fun ActorDto.toDomain() =
+    Actor(
+        id = id ?: 0,
+        name = name.orEmpty(),
+        gender = if (gender == 0) Gender.MALE else Gender.FEMALE,
+        profileImg = IMAGES_URL + profilePath.orEmpty(),
+        placeOfBirth = "",
+        birthDate = null,
+        socialMediaLinks = Actor.SocialMediaLinks(
+            youtube = null,
+            facebook = null,
+            instagram = null,
+            tiktok = null,
+            twitter = null
+        ),
+        biography = ""
+    )
+
+fun ActorDetailsDto.toDomain(
+    youtubeLink: String,
+    facebookLink: String,
+    instagramLink: String,
+    twitterLink: String,
+    tiktokLink: String) =
+    Actor(
+        id = id ?: 0,
+        name = name.orEmpty(),
+        birthDate = if (!birthday.isNullOrEmpty()) LocalDate.parse(birthday) else null,
+        placeOfBirth = placeOfBirth.orEmpty(),
+        biography = biography.orEmpty(),
+        profileImg = IMAGES_URL + profilePath.orEmpty(),
+        socialMediaLinks = Actor.SocialMediaLinks(
+            youtube = if (youtubeLink.isNotBlank()) "https://www.youtube.com/@$youtubeLink" else null,
+            facebook = if (facebookLink.isNotBlank()) "https://www.facebook.com/$facebookLink" else null,
+            instagram = if (instagramLink.isNotBlank()) "https://www.instagram.com/$instagramLink" else null,
+            twitter = if (twitterLink.isNotBlank()) "https://www.twitter.com/$twitterLink" else null,
+            tiktok = if (tiktokLink.isNotBlank()) "https://www.tiktok.com/@$tiktokLink" else null
+        ),
+        gender = if (gender == 0) Gender.MALE else Gender.FEMALE,
+    )
+
+fun ActorImagesDto.ActorImageDetails.toDomain() =
+    IMAGES_URL + filePath.orEmpty()
+
+fun ActorBestOfMoviesDto.ActorBestOfMoviesAsCrew.toDomain() =
+    Movie(
+        id = id ?: 0,
+        title = title.orEmpty(),
+        genreIds = genreIds,
+        rating = voteAverage?.toFloat() ?: 0f,
+        releaseDate = if (releaseDate.isNotBlank()) LocalDate.parse(releaseDate) else null,
+        backdropUrl = backdropPath.orEmpty(),
+        overview = overview.orEmpty(),
+        posterUrl = IMAGES_URL + posterPath.orEmpty(),
+        trailerUrl = "",
+        duration = Movie.Duration(0, 0),
+        genres = emptyList(),
+    )
+
+fun ActorBestOfMoviesDto.ActorBestOfMoviesAsCast.toDomain() =
+    Movie(
+        id = id ?: 0,
+        title = title.orEmpty(),
+        genreIds = genreIds,
+        rating = voteAverage?.toFloat() ?: 0f,
+        releaseDate = if (releaseDate.isNotBlank()) LocalDate.parse(releaseDate) else null,
+        backdropUrl = backdropPath.orEmpty(),
+        overview = overview.orEmpty(),
+        posterUrl = IMAGES_URL + posterPath.orEmpty(),
+        trailerUrl = "",
+        duration = Movie.Duration(0, 0),
+        genres = emptyList(),
+    )

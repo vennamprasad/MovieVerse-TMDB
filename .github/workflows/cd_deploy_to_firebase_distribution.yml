@@ -1,0 +1,59 @@
+name: CD deploy to Firebase Distribution
+
+on:
+  push:
+    branches: [ develop ]
+
+permissions:
+  checks: write
+  pull-requests: write
+  contents: write
+
+jobs:
+  deploy:
+    name: 📱 Distribute Debug APK to Firebase App Distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Save Service Account Key
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+        run: echo "$FIREBASE_SERVICE_ACCOUNT_KEY" > app/service-account-key.json
+
+      - name: Create google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Create keys.properties
+        run: |
+          cat << EOF > keys.properties
+          BEARER_TOKEN=${{ secrets.BEARER_TOKEN }}
+          KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+          EOF
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Set Release Notes
+        id: set-release-notes
+        run: |
+          echo "RELEASE_NOTES=Push to develop: ${{ github.sha }}" >> $GITHUB_ENV
+      - name: Distribute Debug APK to Firebase App Distribution
+        run: ./gradlew appDistributionUploadDebug --stacktrace
+        env:
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}

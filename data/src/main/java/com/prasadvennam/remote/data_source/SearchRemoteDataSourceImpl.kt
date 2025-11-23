@@ -1,0 +1,31 @@
+package com.prasadvennam.remote.data_source
+
+import com.prasadvennam.data_source.remote.SearchRemoteDataSource
+import com.prasadvennam.remote.services.SearchService
+import com.prasadvennam.utils.handleApi
+import javax.inject.Inject
+
+class SearchRemoteDataSourceImpl  @Inject constructor(
+    private val searchService: SearchService
+) : SearchRemoteDataSource {
+
+    override suspend fun searchMovie(query: String, page: Int, includeAdult: Boolean) =
+        handleApi {
+            searchService.searchMovie(query, page, includeAdult)
+        }
+
+    override suspend fun searchSeries(query: String, page: Int, includeAdult: Boolean) =
+        handleApi {
+            searchService.searchSeries(query, page, includeAdult)
+        }
+
+    override suspend fun searchActor(query: String, page: Int, includeAdult: Boolean) =
+        handleApi {
+            searchService.searchActor(query, page, includeAdult)
+        }
+
+    override suspend fun searchByKeyword(keyword: String, page: Int, includeAdult: Boolean) =
+        handleApi {
+            searchService.getSuggestions(keyword, page, includeAdult)
+        }
+}
