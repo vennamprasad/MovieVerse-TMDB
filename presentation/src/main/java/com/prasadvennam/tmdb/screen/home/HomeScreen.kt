@@ -28,7 +28,7 @@ import com.prasadvennam.tmdb.navigation.LocalScaffoldPaddingValues
 import com.prasadvennam.tmdb.screen.home.components.FeaturedCollectionsSection
 import com.prasadvennam.tmdb.screen.home.components.FeaturedMovies
 import com.prasadvennam.tmdb.screen.home.components.HomeHeader
-import com.prasadvennam.tmdb.screen.home.components.HomeHeaderSlider
+import com.prasadvennam.tmdb.screen.home.components.HomeHeaderSliderEnhanced
 import com.prasadvennam.tmdb.screen.home.components.MyCollectionsLayout
 import com.prasadvennam.tmdb.screen.home.components.SuggestionWithHeader
 import com.prasadvennam.tmdb.presentation.R
@@ -147,7 +147,7 @@ fun HomeContent(
                     .verticalScroll(rememberScrollState()),
             ) {
 
-                HomeHeaderSlider(
+                HomeHeaderSliderEnhanced(
                     items = uiState.sliderItems,
                     enableBlur = uiState.enableBlur,
                     onSliderClick = listener::onMediaItemClicked,

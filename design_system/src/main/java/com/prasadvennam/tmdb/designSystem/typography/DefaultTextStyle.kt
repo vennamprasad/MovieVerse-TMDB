@@ -7,38 +7,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.prasadvennam.tmdb.design_system.R
 
-val Manrope = FontFamily(
-    Font(R.font.manrope_regular, FontWeight.Normal),
-    Font(R.font.manrope_medium, FontWeight.Medium),
-    Font(R.font.manrope_semi_bold, FontWeight.SemiBold),
-    Font(R.font.manrope_bold, FontWeight.Bold)
+val Poppins = FontFamily(
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_medium, FontWeight.Medium),
+    Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
+    Font(R.font.poppins_bold, FontWeight.Bold)
 )
 
 internal val DefaultTextStyle = MovieVerseTextStyle(
     display = TextStyle(
-        fontFamily = Manrope,
+        fontFamily = Poppins,
         fontWeight = FontWeight.Bold,
         fontSize = 40.sp
     ),
 
     title = TitleStyle(
         extraLarge = TextStyle(
-            fontFamily = Manrope,
+            fontFamily = Poppins,
             fontWeight = FontWeight.Medium,
             fontSize = 24.sp
         ),
         large = TextStyle(
-            fontFamily = Manrope,
+            fontFamily = Poppins,
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp
         ),
         medium = TextStyle(
-            fontFamily = Manrope,
+            fontFamily = Poppins,
             fontWeight = FontWeight.Medium,
             fontSize = 18.sp
         ),
         small = TextStyle(
-            fontFamily = Manrope,
+            fontFamily = Poppins,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp
         )
@@ -47,51 +47,51 @@ internal val DefaultTextStyle = MovieVerseTextStyle(
     body = BodyAndLabelStyle(
         large = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             )
         ),
         medium = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
         ),
         small = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp
             )
@@ -101,51 +101,51 @@ internal val DefaultTextStyle = MovieVerseTextStyle(
     label = BodyAndLabelStyle(
         large = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp
             )
         ),
         medium = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp
             )
         ),
         small = FontWeightStyle(
             regular = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp
             ),
             medium = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp
             ),
             semiBold = TextStyle(
-                fontFamily = Manrope,
+                fontFamily = Poppins,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp
             )
