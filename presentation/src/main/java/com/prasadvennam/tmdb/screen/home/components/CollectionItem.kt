@@ -1,8 +1,6 @@
 package com.prasadvennam.tmdb.screen.home.components
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,17 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.prasadvennam.tmdb.designSystem.theme.Theme
+import com.prasadvennam.tmdb.screen.home.CollectionGradient
+import com.prasadvennam.tmdb.screen.home.toBrush
 
 @Composable
 fun CollectionItem(
     @StringRes titleRes: Int,
-    @DrawableRes imageRes: Int,
+    gradient: CollectionGradient,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -42,13 +40,12 @@ fun CollectionItem(
                 contentAlignment = Alignment.BottomCenter
             ) {
 
-                Image(
+                // Gradient background
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp),
-                    painter = painterResource(imageRes),
-                    contentDescription = "collection image",
-                    contentScale = ContentScale.Crop
+                        .height(80.dp)
+                        .background(brush = gradient.toBrush())
                 )
                 Box(
                     modifier = Modifier

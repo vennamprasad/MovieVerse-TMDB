@@ -58,7 +58,7 @@ private fun FeaturedCollections(
             CollectionItem(
                 modifier = Modifier.width(280.dp),
                 titleRes = item.title,
-                imageRes = item.image,
+                gradient = item.gradient,
                 onClick = { onCollectionClick(item.genreId) }
             )
         }
